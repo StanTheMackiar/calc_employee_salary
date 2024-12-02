@@ -9,7 +9,7 @@ public class Main {
     public static int calcSalesSalary(int salesAmount) {
         double salesComissionPercent = 0.2;
 
-        return (int) Math.round(salesAmount * salesComissionPercent);
+        return (int) Math.round(salesAmount + (salesAmount * salesComissionPercent));
     }
 
     public static int calcTransportationSalary(int baseSalary) {
@@ -46,18 +46,18 @@ public class Main {
         System.out.println("Auxilio de transporte: " + salaryDetails.transportationSalary());
         System.out.println("Comisión por ventas: " + salaryDetails.salesSalary());
         System.out.println("Horas extras: " + salaryDetails.extraHoursSalary());
-        System.out.println("Préstamos: " + employee.loans());
+        System.out.println("Préstamos: " + -employee.loans());
         System.out.println("Salario neto: " + salaryDetails.netSalary());
     }
 
     public static void printHighestNetSalary(SalaryDetails salaryDetails) {
         System.out.println("El empleado con el salario neto más alto lo tiene: " + salaryDetails.fullName());
-        System.out.println("Salario base: " + salaryDetails.baseSalary());
+        System.out.println("Salario base: " + salaryDetails.netSalary());
     }
 
     public static void printLowestNetSalary(SalaryDetails salaryDetails) {
         System.out.println("El empleado con el salario neto más bajo lo tiene: " + salaryDetails.fullName());
-        System.out.println("Salario base: " + salaryDetails.baseSalary());
+        System.out.println("Salario base: " + salaryDetails.netSalary());
     }
 
     public static void printAverageBaseSalary(int averageBaseSalary) {
@@ -65,7 +65,7 @@ public class Main {
     }
 
     public static Employee initEmployee(int employeeNumber, Scanner Scanner) {
-        System.out.println("Introduzca el nombre completo del empleado " + employeeNumber);
+        System.out.println("Introduzca el nombre completo del empleado #" + employeeNumber);
         String fullName = Scanner.nextLine();
 
         System.out.println("Introduzca la identificación de " + fullName);
@@ -73,18 +73,23 @@ public class Main {
 
         System.out.println("Introduzca el salario base diario de " + fullName);
         int basicSalary = Scanner.nextInt();
+        Scanner.nextLine();
 
         System.out.println("Introduzca el numero de días trabajados de " + fullName);
         int numDaysWorked = Scanner.nextInt();
+        Scanner.nextLine();
 
-        System.out.println("Introduzca el numero de ventas de " + fullName);
+        System.out.println("Introduzca el total de las ventas de " + fullName);
         int numOfSales = Scanner.nextInt();
+        Scanner.nextLine();
 
         System.out.println("Introduzca el numero de horas extras de " + fullName);
         int numExtraHours = Scanner.nextInt();
+        Scanner.nextLine();
 
         System.out.println("Introduzca la cantidad a deducir por prestamos de " + fullName);
         int loans = Scanner.nextInt();
+        Scanner.nextLine();
 
         return new Employee(fullName, identification, basicSalary, numDaysWorked, numOfSales, numExtraHours, loans);
     }
@@ -101,16 +106,18 @@ public class Main {
         Employee[] employees = new Employee[numEmployees];
         SalaryDetails[] salaryDetails = new SalaryDetails[numEmployees];
 
-        SalaryDetails highestNetSalary = null;
-        SalaryDetails lowestNetSalary = null;
-
         for (int i = 0; i < numEmployees; i++) {
             Employee employee = initEmployee(i + 1, Scanner);
             employees[i] = employee;
 
             SalaryDetails salaryDetail = calcSalary(employee);
             salaryDetails[i] = salaryDetail;
+
+            System.out.println('\n');
         }
+
+        SalaryDetails highestNetSalary = null;
+        SalaryDetails lowestNetSalary = null;
 
         for (int i = 0; i < numEmployees; i++) {
             Employee employee = employees[i];
@@ -118,16 +125,20 @@ public class Main {
 
             printSalary(employee, salaryDetail);
 
+            System.out.println('\n');
+
             totalBaseSalary += salaryDetail.baseSalary();
 
-            highestNetSalary = highestNetSalary == null || salaryDetails.netSalary() > highestNetSalary.netSalary() ? salaryDetails : highestNetSalary;
-            lowestNetSalary = lowestNetSalary == null || salaryDetails.netSalary() < lowestNetSalary.netSalary() ? salaryDetails : lowestNetSalary;
+            highestNetSalary = highestNetSalary == null || salaryDetail.netSalary() > highestNetSalary.netSalary() ? salaryDetail : highestNetSalary;
+            lowestNetSalary = lowestNetSalary == null || salaryDetail.netSalary() < lowestNetSalary.netSalary() ? salaryDetail : lowestNetSalary;
         }
 
         int averageBaseSalary = totalBaseSalary / numEmployees;
 
-        if (highestNetSalary != null) printHighestNetSalary(highestNetSalary);
-        if (lowestNetSalary != null) printLowestNetSalary(lowestNetSalary);
+        printHighestNetSalary(highestNetSalary);
+        System.out.println('\n');
+        printLowestNetSalary(lowestNetSalary);
+        System.out.println('\n');
         printAverageBaseSalary(averageBaseSalary);
     }
 }
